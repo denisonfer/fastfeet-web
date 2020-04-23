@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   max-width: 960px;
-  margin: 0 auto;
+  margin: 0 auto 40px;
 
   h1 {
     color: #444;

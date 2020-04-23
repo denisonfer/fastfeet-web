@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
 
 import api from '../../services/api';
@@ -8,11 +8,23 @@ import ButtonCadastrar from '../../components/ButtonCadastrar';
 import InputBuscar from '../../components/InputBuscar';
 
 export default function Dashboard() {
-  api.get('encomendas');
+  const [encomendas, setEncomendas] = useState([]);
+
+  async function loadOrders() {
+    const response = await api.get('encomendas');
+
+    const data = response.data.allOrders;
+
+    setEncomendas(data);
+  }
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
   return (
     <Container>
       <h1>Gerenciador de Encomendas</h1>
-
       <div>
         <InputBuscar type="text" placeholder="Buscar por encomendas" />
 
@@ -33,71 +45,29 @@ export default function Dashboard() {
         </thead>
 
         <tbody>
-          <tr>
-            <td>#01</td>
-            <td>Ludwig Van Beethoven</td>
-            <td className="deliveryman">
-              <img
-                src="https://api.adorable.io/avatars/40/abott@adorable.png"
-                alt="Foto Entregador"
-              />
-              John Doe
-            </td>
-            <td>Rio do Sul</td>
-            <td>Santa Catarina</td>
-            <td>
-              <Status status={'entregue'}>Entregue</Status>
-            </td>
-            <td>
-              <button type="button">
-                <MdMoreHoriz size={20} color="#c6c6c6" />
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>#02</td>
-            <td>Edward Mãos de Tesoura</td>
-            <td className="deliveryman">
-              <img
-                src="https://api.adorable.io/avatars/40/abott@adorable.png"
-                alt="Foto Entregador"
-              />
-              Zé pequeno
-            </td>
-            <td>Rio do Sul</td>
-            <td>Santa Catarina</td>
-            <td>
-              <Status status={'retirada'}>retirada</Status>
-            </td>
-            <td>
-              <button type="button">
-                <MdMoreHoriz size={20} color="#c6c6c6" />
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td>#02</td>
-            <td>Ricardo de Paula Tejano</td>
-            <td className="deliveryman">
-              <img
-                src="https://api.adorable.io/avatars/40/abott@adorable.png"
-                alt="Foto Entregador"
-              />
-              Zé da Moita
-            </td>
-            <td>Rio do Sul</td>
-            <td>Santa Catarina</td>
-            <td>
-              <Status status={'cancelado'}>Cancelado</Status>
-            </td>
-            <td>
-              <button type="button">
-                <MdMoreHoriz size={20} color="#c6c6c6" />
-              </button>
-            </td>
-          </tr>
+          {encomendas.map((item) => (
+            <tr key={item.id}>
+              <td>#0{item.id}</td>
+              <td>{item.recipient.name}</td>
+              <td className="deliveryman">
+                <img
+                  src="https://api.adorable.io/avatars/40/abott@adorable.png"
+                  alt="Foto Entregador"
+                />
+                {item.courier.name}
+              </td>
+              <td>{item.recipient.city}</td>
+              <td>{item.recipient.state}</td>
+              <td>
+                <Status status="cancelado">Entregue</Status>
+              </td>
+              <td>
+                <button type="button">
+                  <MdMoreHoriz size={20} color="#c6c6c6" />
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </Container>
